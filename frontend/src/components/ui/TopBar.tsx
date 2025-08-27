@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '../../stores/gameStore';
+import type { GameState } from '../../types/game';
 
 const TopBar: React.FC = () => {
   const { farm, setCurrentView, currentView } = useGameStore();
 
-  const navigation = [
+  const navigation: Array<{ id: GameState['currentView']; label: string; icon: string }> = [
     { id: 'farm', label: 'Farm', icon: '🏡' },
     { id: 'monsters', label: 'Monsters', icon: '🐾' },
     { id: 'training', label: 'Training', icon: '💪' },
@@ -46,7 +47,7 @@ const TopBar: React.FC = () => {
             {navigation.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setCurrentView(item.id as any)}
+                onClick={() => setCurrentView(item.id)}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
                   currentView === item.id
                     ? 'bg-green-600 text-white'

@@ -5,12 +5,12 @@ import App from './App';
 describe('App', () => {
   it('renders without crashing', () => {
     render(<App />);
-    expect(screen.getByText('Kingdom Wars')).toBeDefined();
+    expect(screen.getByText('Monster Farm')).toBeDefined();
   });
   
-  it('renders the kingdom creation form', () => {
+  it('renders the game interface', () => {
     render(<App />);
-    expect(screen.getByText('Create Your Kingdom')).toBeDefined();
-    expect(screen.getByLabelText('Kingdom Name')).toBeDefined();
+    expect(screen.getByText('Monster Farm')).toBeDefined();
+    expect(screen.getByText('Farm')).toBeDefined();
   });
 });

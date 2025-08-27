@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { GameState, Farm, Monster, TrainingType, ContestType } from '../types/game';
-import { GAME_CONFIG, MONSTER_SPECIES, PERSONALITIES, CARE_DECAY_RATES } from '../data/gameData';
+import { gameConfig, monsterSpecies, personalities, careDecayRates } from '../data/gameData';
 
 interface GameActions {
   // Game initialization
@@ -49,7 +49,7 @@ const createInitialFarm = (): Farm => ({
   gold: 100,
   prestige: 0,
   level: 1,
-  maxMonsters: GAME_CONFIG.baseFarmSlots,
+  maxMonsters: gameConfig.baseFarmSlots,
   monsters: [],
   lastSaved: Date.now(),
   upgrades: []
@@ -60,10 +60,10 @@ const generateMonsterId = (): string => {
 };
 
 const getRandomPersonality = () => {
-  return PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)];
+  return personalities[Math.floor(Math.random() * personalities.length)];
 };
 
-const calculateMonsterStats = (species: typeof MONSTER_SPECIES[0], level: number) => {
+const calculateMonsterStats = (species: typeof monsterSpecies[0], level: number) => {
   const baseStats = species.baseStats;
   const levelMultiplier = 1 + (level - 1) * 0.1;
 
@@ -91,7 +91,7 @@ export const useGameStore = create<GameStore>()(
 
         try {
           // Create starter monster
-          const starterSpecies = MONSTER_SPECIES.find(s => s.id === 'flamepup');
+          const starterSpecies = monsterSpecies.find(s => s.id === 'flamepup');
           if (!starterSpecies) {
             throw new Error('Starter species not found');
           }
@@ -198,7 +198,7 @@ export const useGameStore = create<GameStore>()(
             ...state.farm,
             prestige: newPrestige,
             level: newLevel,
-            maxMonsters: Math.min(newLevel, GAME_CONFIG.maxMonsters)
+            maxMonsters: Math.min(newLevel, gameConfig.maxMonsters)
           }
         }));
 
@@ -207,7 +207,7 @@ export const useGameStore = create<GameStore>()(
 
       expandFarm: () => {
         const state = get();
-        const expansionCost = (state.farm.maxMonsters - GAME_CONFIG.baseFarmSlots + 1) * 500;
+        const expansionCost = (state.farm.maxMonsters - gameConfig.baseFarmSlots + 1) * 500;
 
         if (state.farm.gold >= expansionCost) {
           set(state => ({
@@ -415,10 +415,10 @@ export const useGameStore = create<GameStore>()(
           const timeSinceCleaned = (Date.now() - monster.lastCleaned) / (1000 * 60);
           const timeSincePlayed = (Date.now() - monster.lastPlayed) / (1000 * 60);
 
-          const newHunger = Math.max(0, monster.hunger - (CARE_DECAY_RATES.hunger * timeSinceFed));
-          const newHappiness = Math.max(0, monster.happiness - (CARE_DECAY_RATES.happiness * timeSincePlayed));
-          const newCleanliness = Math.max(0, monster.cleanliness - (CARE_DECAY_RATES.cleanliness * timeSinceCleaned));
-          const newEnergy = Math.min(100, monster.energy + (CARE_DECAY_RATES.energy * 0.1)); // Slow energy recovery
+          const newHunger = Math.max(0, monster.hunger - (careDecayRates.hunger * timeSinceFed));
+          const newHappiness = Math.max(0, monster.happiness - (careDecayRates.happiness * timeSincePlayed));
+          const newCleanliness = Math.max(0, monster.cleanliness - (careDecayRates.cleanliness * timeSinceCleaned));
+          const newEnergy = Math.min(100, monster.energy + (careDecayRates.energy * 0.1)); // Slow energy recovery
 
           if (newHunger !== monster.hunger || newHappiness !== monster.happiness ||
               newCleanliness !== monster.cleanliness || newEnergy !== monster.energy) {
@@ -435,7 +435,7 @@ export const useGameStore = create<GameStore>()(
         get().checkTrainingComplete();
 
         // Auto-save periodically
-        if (deltaTime > GAME_CONFIG.saveInterval) {
+        if (deltaTime > gameConfig.saveInterval) {
           get().saveGame();
         }
       }

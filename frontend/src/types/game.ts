@@ -91,7 +91,7 @@ export interface ShopItem {
   icon: string;
   description: string;
   price: number;
-  effects: Record<string, any>;
+  effects: Record<string, number | boolean | string>;
   category: 'food' | 'items' | 'eggs' | 'upgrades';
 }
 

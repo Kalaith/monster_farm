@@ -16,7 +16,7 @@ import type {
   RarityChances
 } from '../types/game';
 
-export const GAME_CONFIG: GameConfig = {
+export const gameConfig: GameConfig = {
   version: '1.0.0',
   tickInterval: 1000, // 1 second
   saveInterval: 10000, // 10 seconds
@@ -35,7 +35,7 @@ export const ELEMENTS = {
   LIGHT: 'light' as ElementType
 };
 
-export const ELEMENT_DATA: Record<ElementType, ElementData> = {
+export const elementData: Record<ElementType, ElementData> = {
   fire: {
     name: 'Fire',
     emoji: '🔥',
@@ -94,7 +94,7 @@ export const ELEMENT_DATA: Record<ElementType, ElementData> = {
   }
 };
 
-export const MONSTER_SPECIES: MonsterSpecies[] = [
+export const monsterSpecies: MonsterSpecies[] = [
   {
     id: 'blobling',
     name: 'Blobling',
@@ -160,7 +160,7 @@ export const MONSTER_SPECIES: MonsterSpecies[] = [
   }
 ];
 
-export const TRAINING_TYPES: Record<string, TrainingType> = {
+export const trainingTypes: Record<string, TrainingType> = {
   STRENGTH: {
     id: 'strength',
     name: 'Strength Training',
@@ -223,7 +223,7 @@ export const TRAINING_TYPES: Record<string, TrainingType> = {
   }
 };
 
-export const CONTEST_TYPES: Record<string, ContestType> = {
+export const contestTypes: Record<string, ContestType> = {
   BATTLE: {
     id: 'battle',
     name: 'Battle Contest',
@@ -253,7 +253,7 @@ export const CONTEST_TYPES: Record<string, ContestType> = {
   }
 };
 
-export const SHOP_ITEMS: Record<string, ShopItem[]> = {
+export const shopItems: Record<string, ShopItem[]> = {
   FOOD: [
     {
       id: 'berries',
@@ -372,7 +372,7 @@ export const SHOP_ITEMS: Record<string, ShopItem[]> = {
   ]
 };
 
-export const PERSONALITIES: Personality[] = [
+export const personalities: Personality[] = [
   {
     id: 'playful',
     name: 'Playful',
@@ -435,21 +435,21 @@ export const PERSONALITIES: Personality[] = [
   }
 ];
 
-export const CARE_DECAY_RATES: CareDecayRates = {
+export const careDecayRates: CareDecayRates = {
   hunger: 1, // points per minute
   happiness: 0.5,
   cleanliness: 0.3,
   energy: 2
 };
 
-export const CARE_THRESHOLDS: CareThresholds = {
+export const careThresholds: CareThresholds = {
   critical: 20,
   low: 40,
   good: 70,
   excellent: 90
 };
 
-export const EVOLUTION_REQUIREMENTS: EvolutionRequirements = {
+export const evolutionRequirements: EvolutionRequirements = {
   level: {
     first: 15,
     second: 30
@@ -463,7 +463,7 @@ export const EVOLUTION_REQUIREMENTS: EvolutionRequirements = {
   }
 };
 
-export const FARM_LEVELS: FarmLevel[] = [
+export const farmLevels: FarmLevel[] = [
   { level: 1, requiredPrestige: 0, maxMonsters: 1, unlockedFeatures: ['basic_training'] },
   { level: 2, requiredPrestige: 50, maxMonsters: 2, unlockedFeatures: ['contests'] },
   { level: 3, requiredPrestige: 150, maxMonsters: 3, unlockedFeatures: ['breeding'] },
@@ -472,7 +472,7 @@ export const FARM_LEVELS: FarmLevel[] = [
   { level: 10, requiredPrestige: 2000, maxMonsters: 10, unlockedFeatures: ['legendary_contests'] }
 ];
 
-export const RARITY_CHANCES: RarityChances = {
+export const rarityChances: RarityChances = {
   common: 0.7,
   uncommon: 0.25,
   rare: 0.04,

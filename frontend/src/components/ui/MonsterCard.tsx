@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import type { Monster } from '../../types/game';
-import { ELEMENT_DATA } from '../../data/gameData';
+import { elementData } from '../../data/gameData';
 import { useGameStore } from '../../stores/gameStore';
 
 interface MonsterCardProps {
@@ -10,7 +10,7 @@ interface MonsterCardProps {
 
 const MonsterCard: React.FC<MonsterCardProps> = ({ monster }) => {
   const { feedMonster, cleanMonster, playWithMonster } = useGameStore();
-  const elementInfo = ELEMENT_DATA[monster.element];
+  const elementInfo = elementData[monster.element];
 
   const getStatusColor = (value: number) => {
     if (value >= 70) return 'text-green-400';

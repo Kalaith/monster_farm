@@ -35,6 +35,12 @@ export default tseslint.config(
           selector: 'variableLike',
           format: ['camelCase', 'PascalCase'], // Allow PascalCase for React components
         },
+        // Parameters: allow underscore prefix for unused params
+        {
+          selector: 'parameter',
+          format: ['camelCase', 'PascalCase'],
+          leadingUnderscore: 'allow',
+        },
         {
           selector: 'function',
           format: ['camelCase', 'PascalCase'], // Allow PascalCase for React components
