@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Farm Legacy - Test</title>
+</head>
+<body>
+    <div id="test-output"></div>
+    <button onclick="runTests()">Run Tests</button>
+
+    <script src="js/constants.js"></script>
+    <script src="js/monster.js"></script>
+    <script src="js/farm.js"></script>
+    <script src="js/game.js"></script>
+
+    <script>
+        function log(message) {
+            const output = document.getElementById('test-output');
+            output.innerHTML += '<p>' + message + '</p>';
+            console.log(message);
+        }
+
+        function runTests() {
+            const output = document.getElementById('test-output');
+            output.innerHTML = '<h2>Running Tests...</h2>';
+            
+            try {
+                // Test 1: Check if constants are loaded
+                log('Test 1: Checking constants...');
+                log('MONSTER_SPECIES available: ' + (window.MONSTER_SPECIES ? 'Yes' : 'No'));
+                log('ELEMENT_DATA available: ' + (window.ELEMENT_DATA ? 'Yes' : 'No'));
+                
+                // Test 2: Create a starter monster
+                log('Test 2: Creating starter monster...');
+                const starter = MonsterFactory.createStarterMonster();
+                log('Starter created: ' + starter.name + ' (' + starter.species.name + ')');
+                log('Element: ' + starter.element + ', Rarity: ' + starter.rarity);
+                
+                // Test 3: Create farm and add monster
+                log('Test 3: Creating farm and adding monster...');
+                const farm = new Farm();
+                const addResult = farm.addMonster(starter);
+                log('Monster added to farm: ' + addResult.success);
+                log('Farm monsters count: ' + farm.monsters.length);
+                
+                // Test 4: Test monster care system
+                log('Test 4: Testing monster care...');
+                starter.updateCare(60000); // 1 minute passed
+                log('Monster hunger after 1 min: ' + Math.round(starter.care.hunger));
+                log('Monster health status: ' + starter.getHealthStatus());
+                
+                // Test 5: Create game instance
+                log('Test 5: Creating game instance...');
+                const game = new Game();
+                log('Game created successfully');
+                
+                log('<strong>All tests completed successfully!</strong>');
+                
+            } catch (error) {
+                log('<strong style="color: red;">Error during tests: ' + error.message + '</strong>');
+                console.error('Full error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
+</html>
