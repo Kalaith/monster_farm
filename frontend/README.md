@@ -22,11 +22,13 @@ A React/TypeScript monster farming game built with modern web technologies.
 ## Getting Started
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -60,18 +62,21 @@ src/
 ## Game Mechanics
 
 ### Monster Care
+
 - **Hunger**: Feed your monsters regularly
 - **Happiness**: Play with your monsters to keep them happy
 - **Cleanliness**: Clean your monsters to maintain hygiene
 - **Energy**: Monsters need rest between activities
 
 ### Training
+
 - **Strength Training**: Increases Attack and HP
 - **Defense Training**: Boosts Defense and HP
 - **Speed Training**: Enhances Speed and Special
 - **Special Training**: Focuses on Special abilities
 
 ### Progression
+
 - **Levels**: Monsters gain experience through training and contests
 - **Evolution**: Monsters can evolve at certain levels
 - **Prestige**: Earn prestige through contests and achievements

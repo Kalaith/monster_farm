@@ -7,7 +7,7 @@ describe('App', () => {
     render(<App />);
     expect(screen.getByText('Monster Farm')).toBeDefined();
   });
-  
+
   it('renders the game interface', () => {
     render(<App />);
     expect(screen.getByText('Monster Farm')).toBeDefined();

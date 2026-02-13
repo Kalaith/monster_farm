@@ -13,7 +13,7 @@ import type {
   CareThresholds,
   EvolutionRequirements,
   FarmLevel,
-  RarityChances
+  RarityChances,
 } from '../types/game';
 
 export const gameConfig: GameConfig = {
@@ -22,7 +22,7 @@ export const gameConfig: GameConfig = {
   saveInterval: 10000, // 10 seconds
   maxMonsters: 50,
   baseFarmSlots: 1,
-  maxLevel: 100
+  maxLevel: 100,
 };
 
 export const ELEMENTS = {
@@ -32,7 +32,7 @@ export const ELEMENTS = {
   AIR: 'air' as ElementType,
   ELECTRIC: 'electric' as ElementType,
   DARK: 'dark' as ElementType,
-  LIGHT: 'light' as ElementType
+  LIGHT: 'light' as ElementType,
 };
 
 export const elementData: Record<ElementType, ElementData> = {
@@ -42,7 +42,7 @@ export const elementData: Record<ElementType, ElementData> = {
     color: '#ff6b47',
     strengths: [ELEMENTS.EARTH, ELEMENTS.AIR],
     weaknesses: [ELEMENTS.WATER, ELEMENTS.ELECTRIC],
-    statBonuses: { attack: 1.2, special: 1.1, defense: 0.9 }
+    statBonuses: { attack: 1.2, special: 1.1, defense: 0.9 },
   },
   water: {
     name: 'Water',
@@ -50,7 +50,7 @@ export const elementData: Record<ElementType, ElementData> = {
     color: '#4ecdc4',
     strengths: [ELEMENTS.FIRE, ELEMENTS.EARTH],
     weaknesses: [ELEMENTS.ELECTRIC, ELEMENTS.AIR],
-    statBonuses: { special: 1.2, hp: 1.1, speed: 0.9 }
+    statBonuses: { special: 1.2, hp: 1.1, speed: 0.9 },
   },
   earth: {
     name: 'Earth',
@@ -58,7 +58,7 @@ export const elementData: Record<ElementType, ElementData> = {
     color: '#8b5cf6',
     strengths: [ELEMENTS.ELECTRIC, ELEMENTS.FIRE],
     weaknesses: [ELEMENTS.WATER, ELEMENTS.AIR],
-    statBonuses: { defense: 1.3, hp: 1.2, speed: 0.8 }
+    statBonuses: { defense: 1.3, hp: 1.2, speed: 0.8 },
   },
   air: {
     name: 'Air',
@@ -66,7 +66,7 @@ export const elementData: Record<ElementType, ElementData> = {
     color: '#06d6a0',
     strengths: [ELEMENTS.EARTH, ELEMENTS.WATER],
     weaknesses: [ELEMENTS.ELECTRIC, ELEMENTS.FIRE],
-    statBonuses: { speed: 1.3, special: 1.1, defense: 0.8 }
+    statBonuses: { speed: 1.3, special: 1.1, defense: 0.8 },
   },
   electric: {
     name: 'Electric',
@@ -74,7 +74,7 @@ export const elementData: Record<ElementType, ElementData> = {
     color: '#ffd23f',
     strengths: [ELEMENTS.WATER, ELEMENTS.AIR],
     weaknesses: [ELEMENTS.EARTH, ELEMENTS.DARK],
-    statBonuses: { speed: 1.2, attack: 1.1, hp: 0.9 }
+    statBonuses: { speed: 1.2, attack: 1.1, hp: 0.9 },
   },
   dark: {
     name: 'Dark',
@@ -82,7 +82,7 @@ export const elementData: Record<ElementType, ElementData> = {
     color: '#6c5ce7',
     strengths: [ELEMENTS.LIGHT, ELEMENTS.ELECTRIC],
     weaknesses: [ELEMENTS.LIGHT, ELEMENTS.FIRE],
-    statBonuses: { special: 1.2, attack: 1.1, defense: 0.9 }
+    statBonuses: { special: 1.2, attack: 1.1, defense: 0.9 },
   },
   light: {
     name: 'Light',
@@ -90,8 +90,8 @@ export const elementData: Record<ElementType, ElementData> = {
     color: '#fdcb6e',
     strengths: [ELEMENTS.DARK, ELEMENTS.FIRE],
     weaknesses: [ELEMENTS.DARK, ELEMENTS.WATER],
-    statBonuses: { hp: 1.2, special: 1.1, attack: 0.9 }
-  }
+    statBonuses: { hp: 1.2, special: 1.1, attack: 0.9 },
+  },
 };
 
 export const monsterSpecies: MonsterSpecies[] = [
@@ -102,7 +102,7 @@ export const monsterSpecies: MonsterSpecies[] = [
     emoji: '🫧',
     rarity: 'common',
     baseStats: { hp: 50, attack: 35, defense: 40, speed: 45, special: 50 },
-    evolvesTo: ['aquaserpent', 'frostguard']
+    evolvesTo: ['aquaserpent', 'frostguard'],
   },
   {
     id: 'flamepup',
@@ -111,7 +111,7 @@ export const monsterSpecies: MonsterSpecies[] = [
     emoji: '🔥',
     rarity: 'common',
     baseStats: { hp: 45, attack: 55, defense: 30, speed: 50, special: 40 },
-    evolvesTo: ['blazehound', 'infernodrake']
+    evolvesTo: ['blazehound', 'infernodrake'],
   },
   {
     id: 'rocksprout',
@@ -120,7 +120,7 @@ export const monsterSpecies: MonsterSpecies[] = [
     emoji: '🌱',
     rarity: 'common',
     baseStats: { hp: 60, attack: 40, defense: 55, speed: 25, special: 35 },
-    evolvesTo: ['stonebreaker', 'crystalking']
+    evolvesTo: ['stonebreaker', 'crystalking'],
   },
   {
     id: 'windwhisper',
@@ -129,7 +129,7 @@ export const monsterSpecies: MonsterSpecies[] = [
     emoji: '🪶',
     rarity: 'common',
     baseStats: { hp: 40, attack: 45, defense: 30, speed: 65, special: 45 },
-    evolvesTo: ['stormrider', 'skyguardian']
+    evolvesTo: ['stormrider', 'skyguardian'],
   },
   {
     id: 'sparkbug',
@@ -138,7 +138,7 @@ export const monsterSpecies: MonsterSpecies[] = [
     emoji: '🐛',
     rarity: 'common',
     baseStats: { hp: 35, attack: 50, defense: 35, speed: 60, special: 45 },
-    evolvesTo: ['voltwasp', 'thunderbeast']
+    evolvesTo: ['voltwasp', 'thunderbeast'],
   },
   {
     id: 'shadowmite',
@@ -147,7 +147,7 @@ export const monsterSpecies: MonsterSpecies[] = [
     emoji: '🕷️',
     rarity: 'uncommon',
     baseStats: { hp: 40, attack: 50, defense: 35, speed: 45, special: 55 },
-    evolvesTo: ['nightcrawler', 'voidlord']
+    evolvesTo: ['nightcrawler', 'voidlord'],
   },
   {
     id: 'lumisprite',
@@ -156,8 +156,8 @@ export const monsterSpecies: MonsterSpecies[] = [
     emoji: '✨',
     rarity: 'uncommon',
     baseStats: { hp: 55, attack: 35, defense: 40, speed: 40, special: 55 },
-    evolvesTo: ['angelwing', 'prismheart']
-  }
+    evolvesTo: ['angelwing', 'prismheart'],
+  },
 ];
 
 export const trainingTypes: Record<string, TrainingType> = {
@@ -169,7 +169,7 @@ export const trainingTypes: Record<string, TrainingType> = {
     cost: 50,
     duration: 30000, // 30 seconds
     effects: { attack: 2, hp: 1 },
-    unlocked: true
+    unlocked: true,
   },
   DEFENSE: {
     id: 'defense',
@@ -179,7 +179,7 @@ export const trainingTypes: Record<string, TrainingType> = {
     cost: 50,
     duration: 30000,
     effects: { defense: 2, hp: 1 },
-    unlocked: true
+    unlocked: true,
   },
   SPEED: {
     id: 'speed',
@@ -189,7 +189,7 @@ export const trainingTypes: Record<string, TrainingType> = {
     cost: 75,
     duration: 45000, // 45 seconds
     effects: { speed: 2, special: 1 },
-    unlocked: false
+    unlocked: false,
   },
   SPECIAL: {
     id: 'special',
@@ -199,7 +199,7 @@ export const trainingTypes: Record<string, TrainingType> = {
     cost: 75,
     duration: 45000,
     effects: { special: 3 },
-    unlocked: false
+    unlocked: false,
   },
   RESISTANCE: {
     id: 'resistance',
@@ -209,7 +209,7 @@ export const trainingTypes: Record<string, TrainingType> = {
     cost: 150,
     duration: 60000, // 60 seconds
     effects: { resistanceBonus: 0.1 },
-    unlocked: false
+    unlocked: false,
   },
   BALANCED: {
     id: 'balanced',
@@ -219,8 +219,8 @@ export const trainingTypes: Record<string, TrainingType> = {
     cost: 100,
     duration: 90000, // 90 seconds
     effects: { hp: 1, attack: 1, defense: 1, speed: 1, special: 1 },
-    unlocked: false
-  }
+    unlocked: false,
+  },
 };
 
 export const contestTypes: Record<string, ContestType> = {
@@ -231,7 +231,7 @@ export const contestTypes: Record<string, ContestType> = {
     description: 'Pure combat competition',
     requirements: { level: 5 },
     rewards: { gold: 200, prestige: 10 },
-    statRequirements: ['attack', 'defense', 'hp']
+    statRequirements: ['attack', 'defense', 'hp'],
   },
   AGILITY: {
     id: 'agility',
@@ -240,7 +240,7 @@ export const contestTypes: Record<string, ContestType> = {
     description: 'Speed and reflexes challenge',
     requirements: { level: 3 },
     rewards: { gold: 150, prestige: 8 },
-    statRequirements: ['speed', 'special']
+    statRequirements: ['speed', 'special'],
   },
   BEAUTY: {
     id: 'beauty',
@@ -249,8 +249,8 @@ export const contestTypes: Record<string, ContestType> = {
     description: 'Care and grooming showcase',
     requirements: { level: 1, happiness: 80 },
     rewards: { gold: 100, prestige: 5 },
-    statRequirements: ['happiness', 'cleanliness']
-  }
+    statRequirements: ['happiness', 'cleanliness'],
+  },
 };
 
 export const shopItems: Record<string, ShopItem[]> = {
@@ -262,7 +262,7 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Restores hunger and adds happiness',
       price: 20,
       effects: { hunger: 30, happiness: 10 },
-      category: 'food'
+      category: 'food',
     },
     {
       id: 'premium_food',
@@ -271,7 +271,7 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'High-quality nutrition boosts stats',
       price: 75,
       effects: { hunger: 50, happiness: 15, tempStatBonus: 0.1 },
-      category: 'food'
+      category: 'food',
     },
     {
       id: 'energy_drink',
@@ -280,8 +280,8 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Instantly restores energy',
       price: 50,
       effects: { energy: 100 },
-      category: 'food'
-    }
+      category: 'food',
+    },
   ],
   ITEMS: [
     {
@@ -291,7 +291,7 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Cleans your monster thoroughly',
       price: 30,
       effects: { cleanliness: 100, happiness: 5 },
-      category: 'items'
+      category: 'items',
     },
     {
       id: 'toy',
@@ -300,7 +300,7 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Increases happiness significantly',
       price: 100,
       effects: { happiness: 50, energy: -10 },
-      category: 'items'
+      category: 'items',
     },
     {
       id: 'medicine',
@@ -309,8 +309,8 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Cures sickness and restores health',
       price: 150,
       effects: { health: 100, sick: false },
-      category: 'items'
-    }
+      category: 'items',
+    },
   ],
   EGGS: [
     {
@@ -320,7 +320,7 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Contains a Fire-type monster',
       price: 500,
       effects: { element: ELEMENTS.FIRE },
-      category: 'eggs'
+      category: 'eggs',
     },
     {
       id: 'water_egg',
@@ -329,7 +329,7 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Contains a Water-type monster',
       price: 500,
       effects: { element: ELEMENTS.WATER },
-      category: 'eggs'
+      category: 'eggs',
     },
     {
       id: 'mystery_egg',
@@ -338,8 +338,8 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Contains a random monster!',
       price: 750,
       effects: { element: 'random' },
-      category: 'eggs'
-    }
+      category: 'eggs',
+    },
   ],
   UPGRADES: [
     {
@@ -349,7 +349,7 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Adds +1 monster slot to your farm',
       price: 1000,
       effects: { farmSlots: 1 },
-      category: 'upgrades'
+      category: 'upgrades',
     },
     {
       id: 'training_boost',
@@ -358,7 +358,7 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Reduces training time by 25%',
       price: 2000,
       effects: { trainingSpeedBonus: 0.25 },
-      category: 'upgrades'
+      category: 'upgrades',
     },
     {
       id: 'auto_feeder',
@@ -367,9 +367,9 @@ export const shopItems: Record<string, ShopItem[]> = {
       description: 'Automatically feeds hungry monsters',
       price: 3000,
       effects: { autoFeed: true },
-      category: 'upgrades'
-    }
-  ]
+      category: 'upgrades',
+    },
+  ],
 };
 
 export const personalities: Personality[] = [
@@ -380,8 +380,8 @@ export const personalities: Personality[] = [
     effects: {
       happinessGain: 1.5,
       energyLoss: 1.2,
-      trainingBonus: 0.1
-    }
+      trainingBonus: 0.1,
+    },
   },
   {
     id: 'lazy',
@@ -390,8 +390,8 @@ export const personalities: Personality[] = [
     effects: {
       energyLoss: 0.7,
       trainingPenalty: 0.1,
-      hungerGain: 1.3
-    }
+      hungerGain: 1.3,
+    },
   },
   {
     id: 'stubborn',
@@ -400,8 +400,8 @@ export const personalities: Personality[] = [
     effects: {
       trainingResistance: 0.2,
       statPotential: 1.2,
-      careResistance: 0.1
-    }
+      careResistance: 0.1,
+    },
   },
   {
     id: 'gentle',
@@ -410,8 +410,8 @@ export const personalities: Personality[] = [
     effects: {
       happinessGain: 1.2,
       trainingBonus: 0.05,
-      sickResistance: 0.15
-    }
+      sickResistance: 0.15,
+    },
   },
   {
     id: 'energetic',
@@ -420,8 +420,8 @@ export const personalities: Personality[] = [
     effects: {
       speedBonus: 1.15,
       energyLoss: 1.4,
-      activityBonus: 0.2
-    }
+      activityBonus: 0.2,
+    },
   },
   {
     id: 'calm',
@@ -430,51 +430,81 @@ export const personalities: Personality[] = [
     effects: {
       specialBonus: 1.1,
       stressResistance: 0.2,
-      meditationBonus: 0.3
-    }
-  }
+      meditationBonus: 0.3,
+    },
+  },
 ];
 
 export const careDecayRates: CareDecayRates = {
   hunger: 1, // points per minute
   happiness: 0.5,
   cleanliness: 0.3,
-  energy: 2
+  energy: 2,
 };
 
 export const careThresholds: CareThresholds = {
   critical: 20,
   low: 40,
   good: 70,
-  excellent: 90
+  excellent: 90,
 };
 
 export const evolutionRequirements: EvolutionRequirements = {
   level: {
     first: 15,
-    second: 30
+    second: 30,
   },
   care: {
     happiness: 80,
-    cleanliness: 70
+    cleanliness: 70,
   },
   stats: {
-    minTotal: 300
-  }
+    minTotal: 300,
+  },
 };
 
 export const farmLevels: FarmLevel[] = [
-  { level: 1, requiredPrestige: 0, maxMonsters: 1, unlockedFeatures: ['basic_training'] },
-  { level: 2, requiredPrestige: 50, maxMonsters: 2, unlockedFeatures: ['contests'] },
-  { level: 3, requiredPrestige: 150, maxMonsters: 3, unlockedFeatures: ['breeding'] },
-  { level: 4, requiredPrestige: 300, maxMonsters: 4, unlockedFeatures: ['advanced_training'] },
-  { level: 5, requiredPrestige: 500, maxMonsters: 5, unlockedFeatures: ['rare_monsters'] },
-  { level: 10, requiredPrestige: 2000, maxMonsters: 10, unlockedFeatures: ['legendary_contests'] }
+  {
+    level: 1,
+    requiredPrestige: 0,
+    maxMonsters: 1,
+    unlockedFeatures: ['basic_training'],
+  },
+  {
+    level: 2,
+    requiredPrestige: 50,
+    maxMonsters: 2,
+    unlockedFeatures: ['contests'],
+  },
+  {
+    level: 3,
+    requiredPrestige: 150,
+    maxMonsters: 3,
+    unlockedFeatures: ['breeding'],
+  },
+  {
+    level: 4,
+    requiredPrestige: 300,
+    maxMonsters: 4,
+    unlockedFeatures: ['advanced_training'],
+  },
+  {
+    level: 5,
+    requiredPrestige: 500,
+    maxMonsters: 5,
+    unlockedFeatures: ['rare_monsters'],
+  },
+  {
+    level: 10,
+    requiredPrestige: 2000,
+    maxMonsters: 10,
+    unlockedFeatures: ['legendary_contests'],
+  },
 ];
 
 export const rarityChances: RarityChances = {
   common: 0.7,
   uncommon: 0.25,
   rare: 0.04,
-  legendary: 0.01
+  legendary: 0.01,
 };

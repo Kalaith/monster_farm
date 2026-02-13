@@ -39,15 +39,11 @@ const MainMenu: React.FC = () => {
             Start Game
           </button>
 
-          <button
-            className="block w-64 mx-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors duration-200 transform hover:scale-105"
-          >
+          <button className="block w-64 mx-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors duration-200 transform hover:scale-105">
             Load Game
           </button>
 
-          <button
-            className="block w-64 mx-auto px-8 py-4 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors duration-200 transform hover:scale-105"
-          >
+          <button className="block w-64 mx-auto px-8 py-4 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors duration-200 transform hover:scale-105">
             Settings
           </button>
         </motion.div>

@@ -6,11 +6,15 @@ import type { GameState } from '../../types/game';
 const TopBar: React.FC = () => {
   const { farm, setCurrentView, currentView } = useGameStore();
 
-  const navigation: Array<{ id: GameState['currentView']; label: string; icon: string }> = [
+  const navigation: Array<{
+    id: GameState['currentView'];
+    label: string;
+    icon: string;
+  }> = [
     { id: 'farm', label: 'Farm', icon: '🏡' },
     { id: 'monsters', label: 'Monsters', icon: '🐾' },
     { id: 'training', label: 'Training', icon: '💪' },
-    { id: 'shop', label: 'Shop', icon: '🛒' }
+    { id: 'shop', label: 'Shop', icon: '🛒' },
   ];
 
   return (

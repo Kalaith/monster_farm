@@ -27,8 +27,12 @@ const FarmView: React.FC = () => {
               className="col-span-full text-center py-12"
             >
               <div className="text-6xl mb-4">🏡</div>
-              <h3 className="text-xl font-semibold text-white mb-2">No Monsters Yet</h3>
-              <p className="text-green-200">Your farm is waiting for its first monster!</p>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                No Monsters Yet
+              </h3>
+              <p className="text-green-200">
+                Your farm is waiting for its first monster!
+              </p>
             </motion.div>
           )}
         </div>

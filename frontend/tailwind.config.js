@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -33,12 +30,12 @@ export default {
         },
       },
       fontFamily: {
-        'fantasy': ['Cinzel', 'serif'],
+        fantasy: ['Cinzel', 'serif'],
       },
       animation: {
         'pulse-gold': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'bounce-gentle': 'bounce 2s infinite',
-        'float': 'float 3s ease-in-out infinite',
+        float: 'float 3s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -49,4 +46,4 @@ export default {
     },
   },
   plugins: [],
-}
+};

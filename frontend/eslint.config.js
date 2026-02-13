@@ -1,8 +1,8 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   { ignores: ['dist', '*.config.ts', 'vitest.config.ts', 'vite.config.ts'] },
@@ -63,7 +63,10 @@ export default tseslint.config(
       // Allow explicit any in some cases but warn
       '@typescript-eslint/no-explicit-any': 'error',
       // No unused variables
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
     },
   },
   // Separate config for config files
@@ -74,5 +77,5 @@ export default tseslint.config(
       globals: globals.node,
     },
     rules: {},
-  },
-)
+  }
+);
