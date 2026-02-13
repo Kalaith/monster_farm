@@ -1,36 +1,22 @@
-{
+﻿{
   "compilerOptions": {
-    "outDir": "dist",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "sourceMap": true,
-    "allowJs": false,
-    "declaration": true,
     "moduleResolution": "bundler",
-    "forceConsistentCasingInFileNames": true,
-
-    // Strict Type Checking
-    "strict": true,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false,
-    "exactOptionalPropertyTypes": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "useUnknownInCatchVariables": true,
-    "noImplicitAny": true,
-    // Module Resolution
-    "esModuleInterop": true,
-    "skipLibCheck": true,
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "noEmit": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
   },
-  "include": ["*.ts", "src/**/*.tsx", "**/*.ts"],
-  "exclude": ["node_modules", "dist", "rollup.config.mjs", "vitest.config.ts"]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
