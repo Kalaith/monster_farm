@@ -23,10 +23,7 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       // Naming conventions per WebHatchery standards
       '@typescript-eslint/naming-convention': [
         'error',
@@ -63,10 +60,7 @@ export default tseslint.config(
       // Allow explicit any in some cases but warn
       '@typescript-eslint/no-explicit-any': 'error',
       // No unused variables
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_' },
-      ],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },
   // Separate config for config files
@@ -77,5 +71,12 @@ export default tseslint.config(
       globals: globals.node,
     },
     rules: {},
+  },
+  // Test utilities and test specs are not hot-reloaded React modules.
+  {
+    files: ['src/test/**/*.{ts,tsx}', '**/*.test.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
   }
 );

@@ -9,14 +9,7 @@ export interface GameConfig {
   maxLevel: number;
 }
 
-export type ElementType =
-  | 'fire'
-  | 'water'
-  | 'earth'
-  | 'air'
-  | 'electric'
-  | 'dark'
-  | 'light';
+export type ElementType = 'fire' | 'water' | 'earth' | 'air' | 'electric' | 'dark' | 'light';
 
 export interface ElementData {
   name: string;

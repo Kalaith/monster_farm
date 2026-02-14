@@ -51,9 +51,7 @@ const MonsterCard: React.FC<MonsterCardProps> = ({ monster }) => {
         <div>
           <div className="flex justify-between text-sm text-green-200 mb-1">
             <span>Hunger</span>
-            <span className={getStatusColor(monster.hunger)}>
-              {Math.round(monster.hunger)}%
-            </span>
+            <span className={getStatusColor(monster.hunger)}>{Math.round(monster.hunger)}%</span>
           </div>
           <div className="w-full bg-green-900 rounded-full h-2">
             <div
@@ -96,9 +94,7 @@ const MonsterCard: React.FC<MonsterCardProps> = ({ monster }) => {
         <div>
           <div className="flex justify-between text-sm text-green-200 mb-1">
             <span>Energy</span>
-            <span className={getStatusColor(monster.energy)}>
-              {Math.round(monster.energy)}%
-            </span>
+            <span className={getStatusColor(monster.energy)}>{Math.round(monster.energy)}%</span>
           </div>
           <div className="w-full bg-green-900 rounded-full h-2">
             <div
@@ -137,15 +133,10 @@ const MonsterCard: React.FC<MonsterCardProps> = ({ monster }) => {
 
       {monster.isTraining && (
         <div className="mt-3 text-center">
-          <div className="text-sm text-yellow-400 font-medium">
-            Training in progress...
-          </div>
+          <div className="text-sm text-yellow-400 font-medium">Training in progress...</div>
           <div className="text-xs text-green-200">
             {monster.trainingEnd
-              ? Math.max(
-                  0,
-                  Math.ceil((monster.trainingEnd - Date.now()) / 1000)
-                )
+              ? Math.max(0, Math.ceil((monster.trainingEnd - Date.now()) / 1000))
               : 0}
             s remaining
           </div>

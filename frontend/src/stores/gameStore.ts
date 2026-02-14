@@ -2,19 +2,8 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type {
-  GameState,
-  Farm,
-  Monster,
-  TrainingType,
-  ContestType,
-} from '../types/game';
-import {
-  gameConfig,
-  monsterSpecies,
-  personalities,
-  careDecayRates,
-} from '../data/gameData';
+import type { GameState, Farm, Monster, TrainingType, ContestType } from '../types/game';
+import { gameConfig, monsterSpecies, personalities, careDecayRates } from '../data/gameData';
 
 interface GameActions {
   // Game initialization
@@ -78,10 +67,7 @@ const getRandomPersonality = () => {
   return personalities[Math.floor(Math.random() * personalities.length)];
 };
 
-const calculateMonsterStats = (
-  species: (typeof monsterSpecies)[0],
-  level: number
-) => {
+const calculateMonsterStats = (species: (typeof monsterSpecies)[0], level: number) => {
   const baseStats = species.baseStats;
   const levelMultiplier = 1 + (level - 1) * 0.1;
 
@@ -109,9 +95,7 @@ export const useGameStore = create<GameStore>()(
 
         try {
           // Create starter monster
-          const starterSpecies = monsterSpecies.find(
-            (s) => s.id === 'flamepup'
-          );
+          const starterSpecies = monsterSpecies.find(s => s.id === 'flamepup');
           if (!starterSpecies) {
             throw new Error('Starter species not found');
           }
@@ -151,10 +135,7 @@ export const useGameStore = create<GameStore>()(
           get().saveGame();
         } catch (error) {
           set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to initialize game',
+            error: error instanceof Error ? error.message : 'Failed to initialize game',
             isLoading: false,
           });
         }
@@ -187,14 +168,14 @@ export const useGameStore = create<GameStore>()(
         };
 
         localStorage.setItem('monster-farm-save', JSON.stringify(saveData));
-        set((state) => ({
+        set(state => ({
           farm: { ...state.farm, lastSaved: Date.now() },
         }));
       },
 
       // Farm management
       addGold: (amount: number) => {
-        set((state) => ({
+        set(state => ({
           farm: { ...state.farm, gold: state.farm.gold + amount },
         }));
       },
@@ -202,7 +183,7 @@ export const useGameStore = create<GameStore>()(
       spendGold: (amount: number) => {
         const state = get();
         if (state.farm.gold >= amount) {
-          set((state) => ({
+          set(state => ({
             farm: { ...state.farm, gold: state.farm.gold - amount },
           }));
           return true;
@@ -216,7 +197,7 @@ export const useGameStore = create<GameStore>()(
         const newLevel = Math.floor(newPrestige / 100) + 1;
         const leveledUp = newLevel > state.farm.level;
 
-        set((state) => ({
+        set(state => ({
           farm: {
             ...state.farm,
             prestige: newPrestige,
@@ -230,11 +211,10 @@ export const useGameStore = create<GameStore>()(
 
       expandFarm: () => {
         const state = get();
-        const expansionCost =
-          (state.farm.maxMonsters - gameConfig.baseFarmSlots + 1) * 500;
+        const expansionCost = (state.farm.maxMonsters - gameConfig.baseFarmSlots + 1) * 500;
 
         if (state.farm.gold >= expansionCost) {
-          set((state) => ({
+          set(state => ({
             farm: {
               ...state.farm,
               gold: state.farm.gold - expansionCost,
@@ -253,7 +233,7 @@ export const useGameStore = create<GameStore>()(
           return false;
         }
 
-        set((state) => ({
+        set(state => ({
           farm: {
             ...state.farm,
             monsters: [...state.farm.monsters, monster],
@@ -263,20 +243,20 @@ export const useGameStore = create<GameStore>()(
       },
 
       removeMonster: (monsterId: string) => {
-        set((state) => ({
+        set(state => ({
           farm: {
             ...state.farm,
-            monsters: state.farm.monsters.filter((m) => m.id !== monsterId),
+            monsters: state.farm.monsters.filter(m => m.id !== monsterId),
           },
         }));
         return true;
       },
 
       updateMonster: (monsterId: string, updates: Partial<Monster>) => {
-        set((state) => ({
+        set(state => ({
           farm: {
             ...state.farm,
-            monsters: state.farm.monsters.map((monster) =>
+            monsters: state.farm.monsters.map(monster =>
               monster.id === monsterId ? { ...monster, ...updates } : monster
             ),
           },
@@ -285,7 +265,7 @@ export const useGameStore = create<GameStore>()(
 
       feedMonster: (monsterId: string, _foodType: string) => {
         const state = get();
-        const monster = state.farm.monsters.find((m) => m.id === monsterId);
+        const monster = state.farm.monsters.find(m => m.id === monsterId);
         if (!monster) return false;
 
         // Simple feeding logic - restore hunger and happiness
@@ -306,7 +286,7 @@ export const useGameStore = create<GameStore>()(
 
       cleanMonster: (monsterId: string) => {
         const state = get();
-        const monster = state.farm.monsters.find((m) => m.id === monsterId);
+        const monster = state.farm.monsters.find(m => m.id === monsterId);
         if (!monster) return false;
 
         const cost = 30;
@@ -323,7 +303,7 @@ export const useGameStore = create<GameStore>()(
 
       playWithMonster: (monsterId: string) => {
         const state = get();
-        const monster = state.farm.monsters.find((m) => m.id === monsterId);
+        const monster = state.farm.monsters.find(m => m.id === monsterId);
         if (!monster) return false;
 
         if (monster.energy < 20) return false;
@@ -340,7 +320,7 @@ export const useGameStore = create<GameStore>()(
       // Training
       startTraining: (monsterId: string, trainingType: TrainingType) => {
         const state = get();
-        const monster = state.farm.monsters.find((m) => m.id === monsterId);
+        const monster = state.farm.monsters.find(m => m.id === monsterId);
         if (!monster || monster.isTraining) return false;
 
         if (!get().spendGold(trainingType.cost)) return false;
@@ -356,9 +336,8 @@ export const useGameStore = create<GameStore>()(
 
       completeTraining: (monsterId: string) => {
         const state = get();
-        const monster = state.farm.monsters.find((m) => m.id === monsterId);
-        if (!monster || !monster.isTraining || !monster.trainingType)
-          return false;
+        const monster = state.farm.monsters.find(m => m.id === monsterId);
+        if (!monster || !monster.isTraining || !monster.trainingType) return false;
 
         const effects = monster.trainingType.effects;
         const newStats = { ...monster.stats };
@@ -369,10 +348,10 @@ export const useGameStore = create<GameStore>()(
         if (effects.speed) newStats.speed += effects.speed;
         if (effects.special) newStats.special += effects.special;
 
-        set((state) => ({
+        set(state => ({
           farm: {
             ...state.farm,
-            monsters: state.farm.monsters.map((m) =>
+            monsters: state.farm.monsters.map(m =>
               m.id === monsterId
                 ? {
                     ...m,
@@ -394,12 +373,8 @@ export const useGameStore = create<GameStore>()(
         const state = get();
         const now = Date.now();
 
-        state.farm.monsters.forEach((monster) => {
-          if (
-            monster.isTraining &&
-            monster.trainingEnd &&
-            now >= monster.trainingEnd
-          ) {
+        state.farm.monsters.forEach(monster => {
+          if (monster.isTraining && monster.trainingEnd && now >= monster.trainingEnd) {
             get().completeTraining(monster.id);
           }
         });
@@ -408,7 +383,7 @@ export const useGameStore = create<GameStore>()(
       // Contests
       enterContest: (monsterId: string, contestType: ContestType) => {
         const state = get();
-        const monster = state.farm.monsters.find((m) => m.id === monsterId);
+        const monster = state.farm.monsters.find(m => m.id === monsterId);
         if (!monster) return false;
 
         // Simple contest logic - random placement
@@ -439,17 +414,12 @@ export const useGameStore = create<GameStore>()(
         const state = get();
 
         // Update monster care stats
-        state.farm.monsters.forEach((monster) => {
+        state.farm.monsters.forEach(monster => {
           const timeSinceFed = (Date.now() - monster.lastFed) / (1000 * 60); // minutes
-          const timeSinceCleaned =
-            (Date.now() - monster.lastCleaned) / (1000 * 60);
-          const timeSincePlayed =
-            (Date.now() - monster.lastPlayed) / (1000 * 60);
+          const timeSinceCleaned = (Date.now() - monster.lastCleaned) / (1000 * 60);
+          const timeSincePlayed = (Date.now() - monster.lastPlayed) / (1000 * 60);
 
-          const newHunger = Math.max(
-            0,
-            monster.hunger - careDecayRates.hunger * timeSinceFed
-          );
+          const newHunger = Math.max(0, monster.hunger - careDecayRates.hunger * timeSinceFed);
           const newHappiness = Math.max(
             0,
             monster.happiness - careDecayRates.happiness * timeSincePlayed
@@ -458,10 +428,7 @@ export const useGameStore = create<GameStore>()(
             0,
             monster.cleanliness - careDecayRates.cleanliness * timeSinceCleaned
           );
-          const newEnergy = Math.min(
-            100,
-            monster.energy + careDecayRates.energy * 0.1
-          ); // Slow energy recovery
+          const newEnergy = Math.min(100, monster.energy + careDecayRates.energy * 0.1); // Slow energy recovery
 
           if (
             newHunger !== monster.hunger ||
@@ -489,7 +456,7 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'monster-farm-storage',
-      partialize: (state) => ({
+      partialize: state => ({
         farm: state.farm,
         currentView: state.currentView,
       }),

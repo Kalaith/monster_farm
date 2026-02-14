@@ -48,7 +48,7 @@ const TopBar: React.FC = () => {
           </div>
 
           <nav className="flex space-x-2">
-            {navigation.map((item) => (
+            {navigation.map(item => (
               <button
                 key={item.id}
                 onClick={() => setCurrentView(item.id)}

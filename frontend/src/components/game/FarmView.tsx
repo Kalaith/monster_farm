@@ -16,7 +16,7 @@ const FarmView: React.FC = () => {
         <h2 className="text-3xl font-bold text-white mb-6">Your Farm</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {farm.monsters.map((monster) => (
+          {farm.monsters.map(monster => (
             <MonsterCard key={monster.id} monster={monster} />
           ))}
 
@@ -27,12 +27,8 @@ const FarmView: React.FC = () => {
               className="col-span-full text-center py-12"
             >
               <div className="text-6xl mb-4">🏡</div>
-              <h3 className="text-xl font-semibold text-white mb-2">
-                No Monsters Yet
-              </h3>
-              <p className="text-green-200">
-                Your farm is waiting for its first monster!
-              </p>
+              <h3 className="text-xl font-semibold text-white mb-2">No Monsters Yet</h3>
+              <p className="text-green-200">Your farm is waiting for its first monster!</p>
             </motion.div>
           )}
         </div>
