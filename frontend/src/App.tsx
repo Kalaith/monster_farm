@@ -34,7 +34,7 @@ const App: React.FC = () => {
   }, [updateGame]);
 
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <div className="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-emerald-900">
         <AnimatePresence mode="wait">
           <Routes>
