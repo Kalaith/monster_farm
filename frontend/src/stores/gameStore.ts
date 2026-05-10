@@ -1,463 +1,304 @@
-// Game Store - Zustand state management for Monster Farm
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { GameState, Farm, Monster, TrainingType, ContestType } from '../types/game';
-import { gameConfig, monsterSpecies, personalities, careDecayRates } from '../data/gameData';
+import { webhatcheryGameApi, type WebHatcheryGameState } from '../api/webhatcheryGameApi';
+import { useWebHatcherySessionStore } from './webhatcherySessionStore';
 
 interface GameActions {
-  // Game initialization
-  initializeGame: () => void;
-  loadGame: () => boolean;
-  saveGame: () => void;
-
-  // Farm management
-  addGold: (amount: number) => void;
-  spendGold: (amount: number) => boolean;
-  addPrestige: (amount: number) => {
+  initializeGame: () => Promise<void>;
+  loadGame: () => Promise<boolean>;
+  saveGame: () => Promise<void>;
+  addGold: (amount: number) => Promise<void>;
+  spendGold: (amount: number) => Promise<boolean>;
+  addPrestige: (amount: number) => Promise<{
     success: boolean;
     leveledUp: boolean;
     newLevel: number;
-  };
-  expandFarm: () => boolean;
-
-  // Monster management
-  addMonster: (monster: Monster) => boolean;
-  removeMonster: (monsterId: string) => boolean;
-  updateMonster: (monsterId: string, updates: Partial<Monster>) => void;
-  feedMonster: (monsterId: string, foodType: string) => boolean;
-  cleanMonster: (monsterId: string) => boolean;
-  playWithMonster: (monsterId: string) => boolean;
-
-  // Training
-  startTraining: (monsterId: string, trainingType: TrainingType) => boolean;
-  completeTraining: (monsterId: string) => boolean;
-  checkTrainingComplete: () => void;
-
-  // Contests
-  enterContest: (monsterId: string, contestType: ContestType) => boolean;
-
-  // UI
+  }>;
+  expandFarm: () => Promise<boolean>;
+  addMonster: (monster: Monster) => Promise<boolean>;
+  removeMonster: (monsterId: string) => Promise<boolean>;
+  updateMonster: (monsterId: string, updates: Partial<Monster>) => Promise<void>;
+  feedMonster: (monsterId: string, foodType: string) => Promise<boolean>;
+  cleanMonster: (monsterId: string) => Promise<boolean>;
+  playWithMonster: (monsterId: string) => Promise<boolean>;
+  startTraining: (monsterId: string, trainingType: TrainingType) => Promise<boolean>;
+  completeTraining: (monsterId: string) => Promise<boolean>;
+  checkTrainingComplete: () => Promise<void>;
+  enterContest: (monsterId: string, contestType: ContestType) => Promise<boolean>;
   setCurrentView: (view: GameState['currentView']) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-
-  // Game loop
-  updateGame: (deltaTime: number) => void;
+  updateGame: (deltaTime: number) => Promise<void>;
 }
 
 type GameStore = GameState & GameActions;
 
-// Helper functions
-const createInitialFarm = (): Farm => ({
-  gold: 100,
+const emptyFarm: Farm = {
+  gold: 0,
   prestige: 0,
   level: 1,
-  maxMonsters: gameConfig.baseFarmSlots,
+  maxMonsters: 1,
   monsters: [],
   lastSaved: Date.now(),
   upgrades: [],
-});
-
-const generateMonsterId = (): string => {
-  return `monster_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-const getRandomPersonality = () => {
-  return personalities[Math.floor(Math.random() * personalities.length)];
+let tickInFlight = false;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const applyBackendGame = (set: (state: Partial<GameStore>) => void, game: WebHatcheryGameState): void => {
+  const state = game.save.state;
+  if (!isRecord(state) || !isRecord(state.farm)) {
+    set({ isLoading: false, error: 'Backend returned an invalid farm state.' });
+    return;
+  }
+
+  set({
+    farm: state.farm as unknown as Farm,
+    currentView: typeof state.currentView === 'string' ? (state.currentView as GameState['currentView']) : 'farm',
+    isLoading: false,
+    error: null,
+  });
 };
 
-const calculateMonsterStats = (species: (typeof monsterSpecies)[0], level: number) => {
-  const baseStats = species.baseStats;
-  const levelMultiplier = 1 + (level - 1) * 0.1;
+const loadBackendGame = async (): Promise<WebHatcheryGameState> => {
+  const session = useWebHatcherySessionStore.getState();
+  try {
+    return await session.loadGame();
+  } catch {
+    return await session.continueAsGuest();
+  }
+};
 
+const runIntent = async (
+  set: (state: Partial<GameStore>) => void,
+  intent: string,
+  payload: Record<string, unknown> = {},
+  showLoading = true,
+): Promise<WebHatcheryGameState> => {
+  if (showLoading) {
+    set({ isLoading: true, error: null });
+  }
+  const game = await webhatcheryGameApi.applyIntent(intent, payload);
+  useWebHatcherySessionStore.setState({ gameState: game, user: game.user });
+  applyBackendGame(set, game);
+  return game;
+};
+
+const stateFromGame = (game: WebHatcheryGameState): GameState => {
+  const state = game.save.state;
   return {
-    hp: Math.floor(baseStats.hp * levelMultiplier),
-    attack: Math.floor(baseStats.attack * levelMultiplier),
-    defense: Math.floor(baseStats.defense * levelMultiplier),
-    speed: Math.floor(baseStats.speed * levelMultiplier),
-    special: Math.floor(baseStats.special * levelMultiplier),
+    farm: isRecord(state.farm) ? (state.farm as unknown as Farm) : emptyFarm,
+    currentView: typeof state.currentView === 'string' ? (state.currentView as GameState['currentView']) : 'farm',
+    isLoading: false,
+    error: null,
   };
 };
 
 export const useGameStore = create<GameStore>()(
   persist(
     (set, get) => ({
-      // Initial state
-      farm: createInitialFarm(),
+      farm: emptyFarm,
       isLoading: false,
       error: null,
       currentView: 'farm',
 
-      // Game initialization
-      initializeGame: () => {
+      initializeGame: async () => {
         set({ isLoading: true, error: null });
-
         try {
-          // Create starter monster
-          const starterSpecies = monsterSpecies.find(s => s.id === 'flamepup');
-          if (!starterSpecies) {
-            throw new Error('Starter species not found');
-          }
-
-          const starterMonster: Monster = {
-            id: generateMonsterId(),
-            species: starterSpecies,
-            name: 'Flamepup',
-            level: 1,
-            experience: 0,
-            stats: calculateMonsterStats(starterSpecies, 1),
-            element: starterSpecies.element,
-            personality: getRandomPersonality()!,
-            bornAt: Date.now(),
-            lastFed: Date.now(),
-            lastCleaned: Date.now(),
-            lastPlayed: Date.now(),
-            hunger: 100,
-            happiness: 100,
-            cleanliness: 100,
-            energy: 100,
-            isTraining: false,
-            evolutionStage: 0,
-            prestige: 0,
-          };
-
-          const newFarm = {
-            ...createInitialFarm(),
-            monsters: [starterMonster],
-          };
-
-          set({
-            farm: newFarm,
-            isLoading: false,
-          });
-
-          get().saveGame();
+          applyBackendGame(set, await loadBackendGame());
         } catch (error) {
           set({
+            isLoading: false,
             error: error instanceof Error ? error.message : 'Failed to initialize game',
-            isLoading: false,
           });
         }
       },
 
-      loadGame: () => {
+      loadGame: async () => {
         try {
-          const savedData = localStorage.getItem('monster-farm-save');
-          if (!savedData) return false;
-
-          const gameData = JSON.parse(savedData);
-          set({
-            farm: gameData.farm,
-            currentView: gameData.currentView || 'farm',
-          });
-
+          applyBackendGame(set, await loadBackendGame());
           return true;
         } catch (error) {
-          console.error('Failed to load game:', error);
+          set({ error: error instanceof Error ? error.message : 'Failed to load game' });
           return false;
         }
       },
 
-      saveGame: () => {
-        const state = get();
-        const saveData = {
-          farm: state.farm,
-          currentView: state.currentView,
-          lastSaved: Date.now(),
-        };
-
-        localStorage.setItem('monster-farm-save', JSON.stringify(saveData));
-        set(state => ({
-          farm: { ...state.farm, lastSaved: Date.now() },
-        }));
-      },
-
-      // Farm management
-      addGold: (amount: number) => {
-        set(state => ({
-          farm: { ...state.farm, gold: state.farm.gold + amount },
-        }));
-      },
-
-      spendGold: (amount: number) => {
-        const state = get();
-        if (state.farm.gold >= amount) {
-          set(state => ({
-            farm: { ...state.farm, gold: state.farm.gold - amount },
-          }));
-          return true;
+      saveGame: async () => {
+        try {
+          await runIntent(set, 'save');
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Failed to save game' });
         }
-        return false;
       },
 
-      addPrestige: (amount: number) => {
-        const state = get();
-        const newPrestige = state.farm.prestige + amount;
-        const newLevel = Math.floor(newPrestige / 100) + 1;
-        const leveledUp = newLevel > state.farm.level;
-
-        set(state => ({
-          farm: {
-            ...state.farm,
-            prestige: newPrestige,
-            level: newLevel,
-            maxMonsters: Math.min(newLevel, gameConfig.maxMonsters),
-          },
-        }));
-
-        return { success: true, leveledUp, newLevel };
-      },
-
-      expandFarm: () => {
-        const state = get();
-        const expansionCost = (state.farm.maxMonsters - gameConfig.baseFarmSlots + 1) * 500;
-
-        if (state.farm.gold >= expansionCost) {
-          set(state => ({
-            farm: {
-              ...state.farm,
-              gold: state.farm.gold - expansionCost,
-              maxMonsters: state.farm.maxMonsters + 1,
-            },
-          }));
-          return true;
+      addGold: async amount => {
+        try {
+          await runIntent(set, 'add_gold', { amount });
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Failed to add gold' });
         }
-        return false;
       },
 
-      // Monster management
-      addMonster: (monster: Monster) => {
-        const state = get();
-        if (state.farm.monsters.length >= state.farm.maxMonsters) {
+      spendGold: async amount => {
+        try {
+          await runIntent(set, 'spend_gold', { amount });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Not enough gold' });
           return false;
         }
-
-        set(state => ({
-          farm: {
-            ...state.farm,
-            monsters: [...state.farm.monsters, monster],
-          },
-        }));
-        return true;
       },
 
-      removeMonster: (monsterId: string) => {
-        set(state => ({
-          farm: {
-            ...state.farm,
-            monsters: state.farm.monsters.filter(m => m.id !== monsterId),
-          },
-        }));
-        return true;
+      addPrestige: async amount => {
+        const previousLevel = get().farm.level;
+        try {
+          const game = await runIntent(set, 'add_prestige', { amount });
+          const nextState = stateFromGame(game);
+          return {
+            success: true,
+            leveledUp: nextState.farm.level > previousLevel,
+            newLevel: nextState.farm.level,
+          };
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Failed to add prestige' });
+          return { success: false, leveledUp: false, newLevel: previousLevel };
+        }
       },
 
-      updateMonster: (monsterId: string, updates: Partial<Monster>) => {
-        set(state => ({
-          farm: {
-            ...state.farm,
-            monsters: state.farm.monsters.map(monster =>
-              monster.id === monsterId ? { ...monster, ...updates } : monster
-            ),
-          },
-        }));
+      expandFarm: async () => {
+        try {
+          await runIntent(set, 'expand_farm');
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to expand farm' });
+          return false;
+        }
       },
 
-      feedMonster: (monsterId: string, _foodType: string) => {
-        const state = get();
-        const monster = state.farm.monsters.find(m => m.id === monsterId);
-        if (!monster) return false;
-
-        // Simple feeding logic - restore hunger and happiness
-        const hungerGain = 30;
-        const happinessGain = 10;
-        const cost = 20;
-
-        if (!get().spendGold(cost)) return false;
-
-        get().updateMonster(monsterId, {
-          hunger: Math.min(100, monster.hunger + hungerGain),
-          happiness: Math.min(100, monster.happiness + happinessGain),
-          lastFed: Date.now(),
-        });
-
-        return true;
+      addMonster: async monster => {
+        try {
+          await runIntent(set, 'add_monster', { monster });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to add monster' });
+          return false;
+        }
       },
 
-      cleanMonster: (monsterId: string) => {
-        const state = get();
-        const monster = state.farm.monsters.find(m => m.id === monsterId);
-        if (!monster) return false;
-
-        const cost = 30;
-        if (!get().spendGold(cost)) return false;
-
-        get().updateMonster(monsterId, {
-          cleanliness: 100,
-          happiness: Math.min(100, monster.happiness + 5),
-          lastCleaned: Date.now(),
-        });
-
-        return true;
+      removeMonster: async monsterId => {
+        try {
+          await runIntent(set, 'remove_monster', { monsterId });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to remove monster' });
+          return false;
+        }
       },
 
-      playWithMonster: (monsterId: string) => {
-        const state = get();
-        const monster = state.farm.monsters.find(m => m.id === monsterId);
-        if (!monster) return false;
-
-        if (monster.energy < 20) return false;
-
-        get().updateMonster(monsterId, {
-          happiness: Math.min(100, monster.happiness + 20),
-          energy: Math.max(0, monster.energy - 20),
-          lastPlayed: Date.now(),
-        });
-
-        return true;
+      updateMonster: async (monsterId, updates) => {
+        try {
+          await runIntent(set, 'update_monster', { monsterId, updates });
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to update monster' });
+        }
       },
 
-      // Training
-      startTraining: (monsterId: string, trainingType: TrainingType) => {
-        const state = get();
-        const monster = state.farm.monsters.find(m => m.id === monsterId);
-        if (!monster || monster.isTraining) return false;
-
-        if (!get().spendGold(trainingType.cost)) return false;
-
-        get().updateMonster(monsterId, {
-          isTraining: true,
-          trainingType,
-          trainingEnd: Date.now() + trainingType.duration,
-        });
-
-        return true;
+      feedMonster: async (monsterId, foodType) => {
+        try {
+          await runIntent(set, 'feed_monster', { monsterId, foodType });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to feed monster' });
+          return false;
+        }
       },
 
-      completeTraining: (monsterId: string) => {
-        const state = get();
-        const monster = state.farm.monsters.find(m => m.id === monsterId);
-        if (!monster || !monster.isTraining || !monster.trainingType) return false;
-
-        const effects = monster.trainingType.effects;
-        const newStats = { ...monster.stats };
-
-        if (effects.hp) newStats.hp += effects.hp;
-        if (effects.attack) newStats.attack += effects.attack;
-        if (effects.defense) newStats.defense += effects.defense;
-        if (effects.speed) newStats.speed += effects.speed;
-        if (effects.special) newStats.special += effects.special;
-
-        set(state => ({
-          farm: {
-            ...state.farm,
-            monsters: state.farm.monsters.map(m =>
-              m.id === monsterId
-                ? {
-                    ...m,
-                    isTraining: false,
-                    trainingType: undefined,
-                    trainingEnd: undefined,
-                    stats: newStats,
-                    experience: m.experience + 10,
-                  }
-                : m
-            ),
-          },
-        }));
-
-        return true;
+      cleanMonster: async monsterId => {
+        try {
+          await runIntent(set, 'clean_monster', { monsterId });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to clean monster' });
+          return false;
+        }
       },
 
-      checkTrainingComplete: () => {
-        const state = get();
-        const now = Date.now();
-
-        state.farm.monsters.forEach(monster => {
-          if (monster.isTraining && monster.trainingEnd && now >= monster.trainingEnd) {
-            get().completeTraining(monster.id);
-          }
-        });
+      playWithMonster: async monsterId => {
+        try {
+          await runIntent(set, 'play_with_monster', { monsterId });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to play with monster' });
+          return false;
+        }
       },
 
-      // Contests
-      enterContest: (monsterId: string, contestType: ContestType) => {
-        const state = get();
-        const monster = state.farm.monsters.find(m => m.id === monsterId);
-        if (!monster) return false;
-
-        // Simple contest logic - random placement
-        // const placement = Math.floor(Math.random() * 3) + 1; // 1st, 2nd, or 3rd
-        const rewards = contestType.rewards;
-
-        get().addGold(rewards.gold);
-        get().addPrestige(rewards.prestige);
-
-        return true;
+      startTraining: async (monsterId, trainingType) => {
+        try {
+          await runIntent(set, 'start_training', { monsterId, trainingType });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to start training' });
+          return false;
+        }
       },
 
-      // UI
-      setCurrentView: (view: GameState['currentView']) => {
+      completeTraining: async monsterId => {
+        try {
+          await runIntent(set, 'complete_training', { monsterId });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to complete training' });
+          return false;
+        }
+      },
+
+      checkTrainingComplete: async () => {
+        await get().updateGame(1000);
+      },
+
+      enterContest: async (monsterId, contestType) => {
+        try {
+          await runIntent(set, 'enter_contest', { monsterId, contestType });
+          return true;
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Unable to enter contest' });
+          return false;
+        }
+      },
+
+      setCurrentView: view => {
         set({ currentView: view });
       },
 
-      setLoading: (loading: boolean) => {
+      setLoading: loading => {
         set({ isLoading: loading });
       },
 
-      setError: (error: string | null) => {
+      setError: error => {
         set({ error });
       },
 
-      // Game loop
-      updateGame: (deltaTime: number) => {
-        const state = get();
-
-        // Update monster care stats
-        state.farm.monsters.forEach(monster => {
-          const timeSinceFed = (Date.now() - monster.lastFed) / (1000 * 60); // minutes
-          const timeSinceCleaned = (Date.now() - monster.lastCleaned) / (1000 * 60);
-          const timeSincePlayed = (Date.now() - monster.lastPlayed) / (1000 * 60);
-
-          const newHunger = Math.max(0, monster.hunger - careDecayRates.hunger * timeSinceFed);
-          const newHappiness = Math.max(
-            0,
-            monster.happiness - careDecayRates.happiness * timeSincePlayed
-          );
-          const newCleanliness = Math.max(
-            0,
-            monster.cleanliness - careDecayRates.cleanliness * timeSinceCleaned
-          );
-          const newEnergy = Math.min(100, monster.energy + careDecayRates.energy * 0.1); // Slow energy recovery
-
-          if (
-            newHunger !== monster.hunger ||
-            newHappiness !== monster.happiness ||
-            newCleanliness !== monster.cleanliness ||
-            newEnergy !== monster.energy
-          ) {
-            get().updateMonster(monster.id, {
-              hunger: newHunger,
-              happiness: newHappiness,
-              cleanliness: newCleanliness,
-              energy: newEnergy,
-            });
-          }
-        });
-
-        // Check training completion
-        get().checkTrainingComplete();
-
-        // Auto-save periodically
-        if (deltaTime > gameConfig.saveInterval) {
-          get().saveGame();
+      updateGame: async deltaTime => {
+        if (tickInFlight) return;
+        tickInFlight = true;
+        try {
+          await runIntent(set, 'tick', { deltaTime }, false);
+        } catch (error) {
+          set({ isLoading: false, error: error instanceof Error ? error.message : 'Failed to update game' });
+        } finally {
+          tickInFlight = false;
         }
       },
     }),
     {
       name: 'monster-farm-storage',
       partialize: state => ({
-        farm: state.farm,
         currentView: state.currentView,
       }),
     }

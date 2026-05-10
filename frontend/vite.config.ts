@@ -1,9 +1,3 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
+import { createWebHatcheryViteConfig } from '../../tools/shared/frontend/viteConfig';
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  base: '/monster_farm/',
-});
+export default createWebHatcheryViteConfig({ slug: 'monster_farm', useAlias: false });

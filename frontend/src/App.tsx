@@ -6,29 +6,25 @@ import MainMenu from './components/MainMenu';
 import { useGameStore } from './stores/gameStore';
 
 const App: React.FC = () => {
-  const { currentView, initializeGame, loadGame, updateGame } = useGameStore();
+  const { currentView, initializeGame, updateGame } = useGameStore();
   const gameLoopRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Try to load saved game, otherwise initialize new game
-    const loaded = loadGame();
-    if (!loaded) {
-      initializeGame();
-    }
-  }, [initializeGame, loadGame]);
+    void initializeGame();
+  }, [initializeGame]);
 
   useEffect(() => {
     // Start game loop
     const loop = () => {
-      updateGame(1000); // Update every second
-      gameLoopRef.current = setTimeout(loop, 1000);
+      void updateGame(1000);
+      gameLoopRef.current = window.setTimeout(loop, 1000);
     };
 
     loop();
 
     return () => {
       if (gameLoopRef.current) {
-        clearTimeout(gameLoopRef.current);
+        window.clearTimeout(gameLoopRef.current);
       }
     };
   }, [updateGame]);
